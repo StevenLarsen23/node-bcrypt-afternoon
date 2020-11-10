@@ -1,24 +1,35 @@
-import React, { Component } from 'react'
-import './Container.css'
-import Treasure from '../Treasure'
+import React, { Component } from "react";
+import "./Container.css";
+import Treasure from "../Treasure";
+import axios from "axios";
 
 export default class Container extends Component {
   constructor() {
-    super()
+    super();
     this.state = {
       treasures: {},
-    }
-    this.addMyTreasure = this.addMyTreasure.bind(this)
+    };
+    this.addMyTreasure = this.addMyTreasure.bind(this);
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps !== this.props) {
-      this.setState({ treasures: {} })
+      this.setState({ treasures: {} });
     }
   }
 
   getDragonTreasure() {
-    // axios GET to /api/treasure/dragon here
+    axios
+      .get("/api/treasure/dragon")
+      .then(treasure => {
+        this.setState({
+          treasures: {
+            ...this.state.treasures,
+            dragon: treasure.data,
+          },
+        });
+      })
+      .catch(err => console.log(err));
   }
 
   getAllTreasure() {
@@ -26,7 +37,17 @@ export default class Container extends Component {
   }
 
   getMyTreasure() {
-    // axios GET to /api/treasure/user here
+    axios
+    .get('/api/treasure/user')
+    .then(treasure => {
+      this.setState({
+        treasures: {
+          ...this.state.treasures,
+          user: treasure.data
+        }
+      })
+    })
+    .catch(err => alert(err.response.request.response));
   }
 
   addMyTreasure(newMyTreasure) {
@@ -35,12 +56,12 @@ export default class Container extends Component {
         ...this.state.treasures,
         user: newMyTreasure,
       },
-    })
+    });
   }
 
   render() {
-    const { username } = this.props.user
-    const { dragon, user, all } = this.state.treasures
+    const { username } = this.props.user;
+    const { dragon, user, all } = this.state.treasures;
     return (
       <div className="Container">
         {dragon ? (
@@ -102,6 +123,6 @@ export default class Container extends Component {
           </div>
         )}
       </div>
-    )
+    );
   }
 }
